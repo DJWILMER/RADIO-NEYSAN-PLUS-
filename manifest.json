@@ -1,0 +1,20 @@
+﻿{
+  "name": "RADIO NEYSAN PLUS",
+  "short_name": "RADIO NEYSAN PLUS",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#28a745",
+  "theme_color": "#28a745",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

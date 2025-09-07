@@ -1,0 +1,1136 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+    <head>
+    <style>
+      /* Estilo del menú lateral con posición correcta de los botones */
+      .sidenav {
+        height: 100%;
+        width: 250px; /* Ajustado al tamaño adecuado */
+        position: fixed;
+        z-index: 9999; /* Asegura que esté por encima del contenido */
+        top: 0;
+        left: -250px; /* Inicialmente oculto a la izquierda */
+        background-color: #28a745; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        overflow-x: hidden;
+        transition: 0.3s;
+        padding-top: 120px; /* Mantener el espaciado para los botones en la parte superior */
+        box-shadow: 3px 0 5px rgba(0,0,0,0.5); /* Sombra para darle profundidad */
+      }
+
+      .sidenav a {
+        padding: 12px 32px; /* Mejor espaciado para los botones */
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        display: block;
+        transition: 0.3s;
+        margin-bottom: 15px; /* Mayor espacio entre botones */
+        border-radius: 8px; /* Bordes más redondeados */
+        background-color: #28a745; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Fondo oscuro para cada botón */
+      }
+
+      .sidenav a:hover {
+        background-color: #575757; /* Cambio de color al pasar el mouse */
+      }
+
+      .sidenav .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 36px;
+  color: white;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+      /* Botón para abrir el menú */
+      #menuBtn {
+        font-size: 30px;
+        cursor: pointer;
+        color: #111;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10000; /* Asegura que el botón también esté por encima */
+      }
+    </style>
+    
+<link href="manifest.json" rel="manifest"/>
+<script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById("installBtn");
+      if (btn) btn.style.display = "block";
+    });
+
+    function installApp() {
+      const btn = document.getElementById("installBtn");
+      btn.style.display = "none";
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+      });
+    }
+  </script>
+<link href="manifest.json" rel="manifest"/>
+<meta name="theme-color" content="#28a745" />
+<script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function(reg) {
+        console.log("Service Worker registrado:", reg);
+      }).catch(function(err) {
+        console.log("Error al registrar Service Worker:", err);
+      });
+    }
+  </script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RADIO Neysan -Plus</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: none;
+      color: white;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: space-between;
+      padding: 20px;
+      position: relative;
+    }
+    .logo {
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      background: none;
+      overflow: hidden;
+      margin-top: 40px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .player-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #e91e63;
+      color: white;
+      border: none;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .socials {
+      position: absolute;
+      right: 15px;
+      top: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .socials a {
+      width: 40px;
+      height: 40px;
+      background: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      text-decoration: none;
+    }
+    .now-playing {
+      width: 100%;
+      background: #111;
+      padding: 15px;
+      text-align: center;
+      font-size: 15px;
+    }
+  
+.video-fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+}
+.video-fondo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+}
+
+
+
+.video-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -3;
+  clip-path: polygon(0 50%, 100% 30%, 100% 100%, 0 100%);
+}
+.video-bottom video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.6965);
+  transform-origin: center top;
+  
+}
+
+
+.video-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -3;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 0 75%);
+}
+.video-top video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+}
+
+
+overlay-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 0 75%);
+  background: linear-gradient(to bottom, rgba(0, 85, 170, 0.3), rgba(0, 85, 170, 0.05));
+  z-index: -2;
+}
+
+
+overlay-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  clip-path: polygon(0 55%, 100% 35%, 100% 100%, 0 100%);
+  background: linear-gradient(to bottom, rgba(255, 105, 180, 0.75), rgba(255, 20, 147, 0.65));
+  z-index: -2;
+}
+
+@keyframes wave {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05) rotate(-2deg); }
+  100% { transform: scale(1); }
+}
+.logo {
+  animation: wave 2.5s infinite ease-in-out;
+}
+
+.logo::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  animation: ripple 2s infinite;
+  z-index: 1;
+}
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(1.5); opacity: 0.2; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+
+.logo {
+  
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.envivo {
+  animation: parpadeo 1s infinite;
+}
+
+@keyframes fade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.frase-rotativa span {
+  animation: fade 3s ease-in-out infinite;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+    .social-btn {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .social-btn:hover {
+      transform: scale(1.2) rotate(5deg);
+      opacity: 0.85;
+    }
+    .social-btn:nth-child(1) { animation: pop 0.6s ease-out forwards; animation-delay: 0.2s; }
+    .social-btn:nth-child(2) { animation: pop 0.6s ease-out forwards; animation-delay: 0.4s; }
+    .social-btn:nth-child(3) { animation: pop 0.6s ease-out forwards; animation-delay: 0.6s; }
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+.social-bar a {
+  opacity: 0;
+  transform: translateX(50px) scale(0.6);
+  animation: socialEnter 0.5s ease-out forwards;
+}
+.social-bar a:nth-child(1) { animation-delay: 0.1s; }
+.social-bar a:nth-child(2) { animation-delay: 0.2s; }
+.social-bar a:nth-child(3) { animation-delay: 0.3s; }
+.social-bar a:nth-child(4) { animation-delay: 0.4s; }
+.social-bar a:nth-child(5) { animation-delay: 0.5s; }
+
+.social-bar a:hover {
+  transform: scale(1.2) rotate(-5deg);
+  transition: transform 0.3s ease;
+  opacity: 0.9;
+}
+
+@keyframes socialEnter {
+  0% {
+    opacity: 0;
+    transform: translateX(50px) scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+
+  50% { height: 22px; }
+}
+
+
+
+
+
+}
+
+
+.ecualizador .barra {
+  width: 4px;
+  background: white;
+  animation: bounce 1s infinite ease-in-out;
+  transform-origin: bottom;
+  
+}
+
+.ecualizador .barra:nth-child(1) { animation-duration: 0.45s; height: 14px; }
+.ecualizador .barra:nth-child(2) { animation-duration: 0.35s; height: 22px; }
+.ecualizador .barra:nth-child(3) { animation-duration: 0.55s; height: 18px; }
+.ecualizador .barra:nth-child(4) { animation-duration: 0.4s;  height: 25px; }
+.ecualizador .barra:nth-child(5) { animation-duration: 0.5s;  height: 20px; }
+
+@keyframes bounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.8); }
+}
+
+
+.ecualizador .barra {
+  width: 5px;
+  background: white;
+  animation: bounce 1s infinite ease-in-out;
+  transform-origin: bottom;
+  
+}
+
+.ecualizador .barra:nth-child(1) { animation-duration: 0.45s; height: 12px; }
+.ecualizador .barra:nth-child(2) { animation-duration: 0.4s;  height: 18px; }
+.ecualizador .barra:nth-child(3) { animation-duration: 0.5s;  height: 10px; }
+.ecualizador .barra:nth-child(4) { animation-duration: 0.6s;  height: 24px; }
+.ecualizador .barra:nth-child(5) { animation-duration: 0.45s; height: 14px; }
+.ecualizador .barra:nth-child(6) { animation-duration: 0.4s;  height: 20px; }
+.ecualizador .barra:nth-child(7) { animation-duration: 0.55s; height: 16px; }
+.ecualizador .barra:nth-child(8) { animation-duration: 0.5s;  height: 22px; }
+
+@keyframes bounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.7); }
+}
+
+
+.ecualizador .barra:nth-child(9)  { animation-duration: 0.6s; height: 28px; }
+.ecualizador .barra:nth-child(10) { animation-duration: 0.45s; height: 18px; }
+.ecualizador .barra:nth-child(11) { animation-duration: 0.5s; height: 26px; }
+.ecualizador .barra:nth-child(12) { animation-duration: 0.4s; height: 16px; }
+.ecualizador .barra:nth-child(13) { animation-duration: 0.65s; height: 24px; }
+.ecualizador .barra:nth-child(14) { animation-duration: 0.35s; height: 22px; }
+.ecualizador .barra:nth-child(15) { animation-duration: 0.5s; height: 14px; }
+.ecualizador .barra:nth-child(16) { animation-duration: 0.45s; height: 20px; }
+
+.ecualizador .barra:nth-child(17) { animation-duration: 0.6s; height: 23px; }
+.ecualizador .barra:nth-child(18) { animation-duration: 0.35s; height: 26px; }
+.ecualizador .barra:nth-child(19) { animation-duration: 0.4s; height: 29px; }
+.ecualizador .barra:nth-child(20) { animation-duration: 0.45s; height: 12px; }
+.ecualizador .barra:nth-child(21) { animation-duration: 0.5s; height: 15px; }
+.ecualizador .barra:nth-child(22) { animation-duration: 0.55s; height: 18px; }
+.ecualizador .barra:nth-child(23) { animation-duration: 0.6s; height: 21px; }
+.ecualizador .barra:nth-child(24) { animation-duration: 0.35s; height: 24px; }
+.ecualizador .barra:nth-child(25) { animation-duration: 0.4s; height: 27px; }
+.ecualizador .barra:nth-child(26) { animation-duration: 0.45s; height: 30px; }
+.ecualizador .barra:nth-child(27) { animation-duration: 0.5s; height: 13px; }
+.ecualizador .barra:nth-child(28) { animation-duration: 0.55s; height: 16px; }
+.ecualizador .barra:nth-child(29) { animation-duration: 0.6s; height: 19px; }
+.ecualizador .barra:nth-child(30) { animation-duration: 0.35s; height: 22px; }
+.ecualizador .barra:nth-child(31) { animation-duration: 0.4s; height: 25px; }
+.ecualizador .barra:nth-child(32) { animation-duration: 0.45s; height: 28px; }
+
+
+.ecualizador.paused .barra {
+  animation-play-state: paused;
+}
+
+.ecualizador.active .barra {
+  animation-play-state: running;
+}
+
+
+.ecualizador .barra {
+  animation-play-state: paused;
+}
+
+.ecualizador.active .barra {
+  animation-play-state: running !important;
+}
+
+
+/* Estilo por defecto */
+.ecualizador .barra {
+  animation-play-state: paused;
+  transform-origin: bottom;
+  width: 5px;
+  background: white;
+}
+
+/* Estilo más alto */
+.ecualizador.estilo-alto .barra {
+  height: 30px !important;
+}
+
+/* Estilo original */
+.ecualizador.estilo-normal .barra {
+  height: 20px !important;
+}
+
+/* Animación activa solo cuando tiene .active */
+.ecualizador.active .barra {
+  animation-play-state: running !important;
+}
+
+
+@keyframes girar-y-parar {
+  0%   { transform: rotate(0deg); }
+  80%  { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.logo {
+  animation: girar-y-parar 4s ease-in-out infinite;
+}
+
+
+.ondas-circulares {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.ondas-circulares span {
+  position: absolute;
+  border: 4px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  animation: ondaExpandir 2.5s ease-out infinite;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ondas-circulares span:nth-child(2) {
+  animation-delay: 0.8s;
+}
+.ondas-circulares span:nth-child(3) {
+  animation-delay: 1.6s;
+}
+
+@keyframes ondaExpandir {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+  animation-delay: 0.9s;
+}
+  animation-delay: 1.8s;
+}
+
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}</style>
+<script>
+  document.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+  });
+  document.addEventListener("selectstart", function(e) {
+    e.preventDefault();
+  });
+  document.addEventListener("dragstart", function(e) {
+    e.preventDefault();
+  });
+</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background: none !important;">
+<style>
+    body {
+        font-family: Arial, sans-serif; /* Cambiar fuente a Arial en todo el proyecto */
+    }
+
+    /* Estilo del menú lateral con fondo verde completamente estirado y cubriendo toda la pantalla */
+    .sidenav {
+        height: 100vh; /* Estirando el menú a la altura completa de la pantalla */
+        width: 200px; /* Menú más delgado (ancho reducido) */
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: -200px; /* Inicialmente el menú estará completamente oculto */
+        background: url('https://i.ibb.co/FbyCtHSc/IMG-20250627-193124.jpg') no-repeat center center; background-size: cover;
+        background-size: cover; /* Estirando la imagen de fondo para cubrir todo el menú de arriba a abajo */
+        box-shadow: 4px 0 6px rgba(0, 0, 0, 0.5); /* Sombra detallada */
+        transition: 0.3s;
+        padding-top: 100px; /* Ajuste de padding para los botones */
+    }
+
+    .sidenav a {
+        padding: 20px 25px; /* Espaciado ajustado para los botones */
+        text-decoration: none;
+        font-size: 20px; /* Reducir tamaño de fuente para un menú más estrecho */
+        color: white;
+        display: block;
+        transition: 0.3s;
+        margin-bottom: 15px; /* Separación exacta entre los botones */
+        border-radius: 8px; /* Bordes más redondeados */
+        background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente para los botones */
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3); /* Sombra suave en los botones */
+    }
+
+    .sidenav a:hover {
+        background-color: #1e7e34; /* Cambio de color de fondo al pasar el mouse */
+    }
+
+    .sidenav .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 36px;
+  color: white;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+    #menuBtn {
+        font-size: 36px;
+        cursor: pointer;
+        color: white;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10000;
+    }
+
+    /* Animación para abrir el menú desde la izquierda */
+    @keyframes slideIn {
+        0% {
+            left: -200px;
+        }
+        100% {
+            left: 0;
+        }
+    }
+
+    /* Ajuste para ocultar completamente el menú cuando está cerrado */
+    .sidenav.closed {
+        left: -200px !important;  /* Asegura que el menú se mueva completamente hacia la izquierda */
+    }
+</style>
+
+<script>
+    // Función para abrir el menú lateral
+    function openNav() {
+        document.getElementById("mySidenav").classList.remove("closed");  // Mostrar el menú
+    }
+
+    // Función para cerrar el menú lateral
+    function closeNav() {
+        document.getElementById("mySidenav").classList.add("closed");  // Ocultar el menú completamente
+    }
+
+    // Abrir el menú cuando se hace clic en el ícono
+    document.getElementById("menuBtn").onclick = openNav;
+</script>
+
+<div class="fondo-imagen-diagonal" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url(' https://i.ibb.co/5hKWh1bt/Fondo.jpg') no-repeat center -125px;
+    background-size: cover;
+    z-index: 0;
+    pointer-events: none;
+"></div>
+<button id="installBtn" onclick="installApp()" style="display:none;position:fixed;bottom:20px;right:20px;padding:10px 16px;font-size:16px;background:#e91e63;color:white;border:none;border-radius:8px;z-index:1000;">📲 Instalar app</button>
+<div id="install-popup" style="
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  color: white;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 10000;
+  text-align: center;
+  display: none;
+">
+<p style="margin-bottom: 15px; font-size: 16px;">¿Quieres instalar <b>RADIO NEYSAN PLUS </b> como app?</p>
+<button id="install-btn-popup" style="
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+  ">📲 Instalar App - Por favor</button>
+</div>
+
+<div class="social-bar" style="position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 10; display: flex; flex-direction: column; gap: 10px;">
+<a href="https://www.facebook.com/Radio-Neysan-Plus-la-mix-digital-trujillo-106628258770419" target="_blank"><img height="50" src="https://i.postimg.cc/8kfCdqnt/facebook.png" width="50"/></a>
+<a href="https://nazca.globalhost1.com:8040" target="_blank"><img height="50" src="https://i.ibb.co/LdBmf9Bq/4653942.png" width="50"/></a>
+<a href="https://wa.link/2pdl3p" target="_blank"><img height="50" src="https://i.postimg.cc/1zFWrRwy/whatsapp.png" width="50"/></a>
+<a href="https://www.tiktok.com/@e.neylers.a?_t=8peClrbb6Zh&_r=1" target="_blank"><img height="50" src="https://i.postimg.cc/c1FcYt2Q/tiktok.png" width="50"/></a>
+<a href="https://t.me/wilmerdelgadoc" target="_blank"><img height="50" src="https://i.postimg.cc/wvLjzNNn/telegram-icon-free-png.png" width="50"/></a>
+</div>
+<div id="caratula-blur-top" style="position: fixed; top: 0; left: 0; width: 100vw; height: 250px;clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);background-size: cover; background-position: center;backdrop-filter: blur(14px); z-index: 1; display: none;"></div>
+<div class="overlay-bottom"></div><div id="fondo-amarillo-dinamico" style="position: fixed; top: 40vh; left: 0; width: 100vw; height: 60vh; clip-path: polygon(0 70%, 100% 60%, 100% 100%, 0 100%); background: rgba(255, 255, 0, 0.3); z-index: -2; display: none; background-size: cover; background-position: center; backdrop-filter: blur(6px); position: fixed; background-blend-mode: overlay; background-color: rgba(255,255,0,0.35);"></div>
+<div class="video-bottom" style="position: fixed; top: 188px; left: 0; width: 100vw; height: calc(100vh - 240px); overflow: hidden; z-index: -3; clip-path: polygon(0 50%, 100% 30%, 100% 100%, 0 100%);">
+<video autoplay="" loop="" muted="" style="width: 100%; height: 100%; object-fit: contain;">
+<source src="https://lachizzma.com/wp-content/uploads/2025/08/WhatsApp-Video-2025-08-07-at-8.41.24-AM.mp4" type="video/mp4"/>
+</video>
+</div>
+<div class="container">
+<div class="logo" style="position: relative;  z-index: 2; border: 4px solid white;">
+<div class="ondas-circulares">
+<span></span><span></span><span></span>
+</div>
+<img alt="Radio MIX" id="logo-img" src="https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg"/>
+</div>
+<div class="ecualizador estilo-normal" style="
+    position: absolute;
+    top: 367px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3px;
+    z-index: 6;
+    height: 30px;
+    align-items: flex-end;
+">
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+<div class="barra"></div>
+</div>
+<div class="envivo" style="position: absolute; top: 400px; left: 50%; transform: translateX(-50%); background-color: red; color: white; padding: 5px 15px; font-size: 14px; font-weight: bold; border-radius: 4px; z-index: 4; box-shadow: 0 0 5px black;">EN VIVO</div>
+<h1 style="position: absolute; top: 430px; left: 50%; transform: translateX(-50%); color: white; font-size: 24px; font-weight: bold; z-index: 3; white-space: nowrap; text-align: center;">RADIO NEYSAN  PLUS  </h1>
+<div class="frase-rotativa" style="position: absolute;
+    top: 456px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 3;
+    text-align: center;
+    min-height: 1.2em;">
+<span id="frase-texto">Transmite desde TRUJILLO peru </span>
+</div>
+<button class="player-btn" onclick="togglePlay()" style="position: absolute; top: 510px; left: 5%; transform: translateX(0); width: 130px; height: 130px; font-size: 70px; color: green; background: white; border: 4px solid green;">
+<svg fill="green" height="90" viewbox="0 0 24 24" width="90" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 5v14l11-7z"></path>
+</svg>
+</button>
+<div class="now-playing" id="song-title" style="visibility:hidden; height:0; overflow:hidden;">
+      Cargando canción...
+    </div>
+</div>
+<audio id="radio" preload="none" src=" https://nazca.globalhost1.com/8040/stream"></audio>
+<script>
+    const audio = document.getElementById('radio');
+    const btn = document.querySelector('.player-btn');
+    let isPlaying = false;
+    function togglePlay() {
+      if (isPlaying) {
+        audio.pause();
+        btn.innerHTML = `
+<svg width="90" height="90" viewBox="0 0 24 24" fill="green" xmlns="http://www.w3.org/2000/svg">
+  <path d="M8 5v14l11-7z"/>
+</svg>
+`;
+      } else {
+        
+    const jingle = new Audio(" https://nazca.globalhost1.com/8040/stream");
+    btn.disabled = true;
+    btn.innerHTML = "<span style=\"color:green\">…</span>";
+    jingle.play().then(() => {
+      jingle.onended = () => {
+
+audio.play().then(() => {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: titulo || "RADIO MIX",
+      artist: "RADIO MIX -",
+      album: "En Vivo",
+      artwork: [
+        { src: caratula || "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg", sizes: "300x300", type: "image/jpeg" }
+      ]
+    });
+  }
+});
+
+        btn.disabled = false;
+        btn.innerHTML = `
+<svg width="90" height="90" viewBox="0 0 24 24" fill="green" xmlns="http://www.w3.org/2000/svg">
+  <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+</svg>
+`;
+        isPlaying = true;
+      };
+    }).catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = "&#9658;";
+      alert("Toca para activar el sonido");
+    });
+
+        btn.innerHTML = `
+<svg width="90" height="90" viewBox="0 0 24 24" fill="green" xmlns="http://www.w3.org/2000/svg">
+  <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+</svg>
+`;
+      }
+      isPlaying = !isPlaying;
+    }
+
+    // Simulación de actualización de canción (puede ser reemplazado por API real)
+    setTimeout(() => {
+      document.getElementById('song-title').textContent = 'Los Titanes - Eres Mi Razón de Ser';
+    }, 2000);
+  </script>
+<div id="metadata" style="position: fixed; bottom: 80px; left: 0px; background: #00cc00; color: white; font-weight: bold; padding: 5px 10px; font-size: 17px; text-align: left; white-space: nowrap; overflow: hidden; width: 55vw; border-radius: 0 6px 6px 0; z-index: 10;"><div style="font-size: 13px; font-weight: bold; color: white; margin-bottom: 4px;"> TOCANDO AHORA</div><span id="metadata-text" style="display: inline-block;  min-width: 100%;  animation: scroll-left 12s linear infinite; ; color: white">RADIO MIX </span></div>
+
+<script>
+let deferredPrompt;
+const popup = document.getElementById("install-popup");
+const installBtnPopup = document.getElementById("install-btn-popup");
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  popup.style.display = "block";
+
+  installBtnPopup.addEventListener("click", async () => {
+    popup.style.display = "none";
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      console.log("App instalada");
+    }
+    deferredPrompt = null;
+  });
+});
+</script>
+<footer id="footer-rotativo" style="position:fixed;bottom:0;width:100%;text-align:center;padding:6px 10px;color:#ffffff;font-size:14px;z-index:999;font-weight:500;opacity:1;pointer-events:none;text-shadow:1px 1px 3px rgba(0,0,0,0.7);">
+<span id="rotativo" style="transition: opacity 0.5s ease;">Desarrollado por Streaming Delgado 980634177</span>
+</footer>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const frases = ['Desarrollado por STREAMING DELGADO', 'Contactos: 980634177', 'Recuerda paga después que se te entrega el servicio'];
+    let i = 0;
+    const rotador = document.getElementById("rotativo");
+
+    function rotarTexto() {
+      rotador.style.opacity = 0;
+      setTimeout(() => {
+        rotador.textContent = frases[i];
+        rotador.style.opacity = 1;
+        i = (i + 1) % frases.length;
+      }, 500);
+    }
+
+    rotarTexto();
+    setInterval(rotarTexto, 5000);
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const ecualizador = document.querySelector(".ecualizador");
+  const btn = document.querySelector('.player-btn');
+  let isPlaying = false;
+  let estilo = 0;
+
+  btn.addEventListener("click", function() {
+    isPlaying = !isPlaying;
+
+    if (isPlaying) {
+      ecualizador.classList.add("active");
+
+      // Alternar entre estilo-normal y estilo-alto
+      estilo = (estilo + 1) % 2;
+      if (estilo === 0) {
+        ecualizador.classList.remove("estilo-alto");
+        ecualizador.classList.add("estilo-normal");
+      } else {
+        ecualizador.classList.remove("estilo-normal");
+        ecualizador.classList.add("estilo-alto");
+      }
+
+    } else {
+      ecualizador.classList.remove("active");
+    }
+  });
+});
+</script><script>
+const frases = [
+  "Tocamos de todo",
+  "Éxitos juveniles",
+  "Toda la cumbia",
+  "Más salsa",
+  "El sabroso folclore",
+  " para el mundo"
+];
+let i = 0;
+setInterval(() => {
+  document.getElementById("frase-texto").textContent = frases[i];
+  i = (i + 1) % frases.length;
+}, 3000);
+</script><script>
+setTimeout(function() {
+  
+const source = new EventSource("https://nazca.globalhost1.com:8040");
+
+function buscarEniTunes(titulo) {
+  return fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(titulo)}&limit=1`)
+    .then(res => res.json())
+    .then(json => {
+      if (json.results && json.results.length > 0) {
+        return json.results[0].artworkUrl100.replace("100x100", "300x300");
+      }
+      return null;
+    });
+}
+
+function buscarEnDeezer(titulo) {
+  return fetch(`https://api.deezer.com/search?q=${encodeURIComponent(titulo)}&output=jsonp`)
+    .then(res => res.text())
+    .then(txt => {
+      const jsonText = txt.substring(txt.indexOf("(") + 1, txt.lastIndexOf(")"));
+      const json = JSON.parse(jsonText);
+      if (json.data && json.data.length > 0) {
+        return json.data[0].album.cover_big;
+      }
+      return null;
+    });
+}
+
+source.onmessage = async function(event) {
+  const data = JSON.parse(event.data);
+  const titulo = data.streamTitle || "🎵 Transmitiendo música en vivo...";
+  document.getElementById("metadata-text").textContent = titulo;
+
+  const logo = document.getElementById("logo-img");
+  let caratula = await buscarEniTunes(titulo);
+  if (!caratula) {
+    caratula = await buscarEnDeezer(titulo);
+  }
+
+  logo.src = caratula || "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg";
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: titulo,
+        artist: "RADIO Neysan Plus",
+        album: "En Vivo",
+        artwork: [
+          { src: caratula || "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg", sizes: "300x300", type: "image/jpeg" }
+        ]
+      });
+    }
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: titulo,
+        artist: "RADIO Neysan Plus",
+        album: "En Vivo",
+        artwork: [
+          { src: caratula || "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg", sizes: "300x300", type: "image/jpeg" }
+        ]
+      });
+    }
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: titulo,
+      artist: "RADIO Neysan Plus",
+      album: "En Vivo",
+      artwork: [
+        { src: caratula || "https://i.ibb.co/v6rjZ9HM/neysan-plus.jpg", sizes: "300x300", type: "image/jpeg" }
+      ]
+    });
+  }
+
+  const caratulaBlurTop = document.getElementById("caratula-blur-top");
+  if (caratula && caratulaBlurTop) {
+    
+    caratulaBlurTop.style.display = "block";
+  } else if (caratulaBlurTop) {
+    caratulaBlurTop.style.display = "none";
+    
+  }
+
+};
+
+  const fondoAmarillo = document.getElementById("fondo-amarillo-dinamico");
+  if (caratula && fondoAmarillo) {
+    fondoAmarillo.style.display = "block";
+  } else if (fondoAmarillo) {
+    fondoAmarillo.style.display = "none";
+  }
+
+  if (caratula && fondoAmarillo) {
+    fondoAmarillo.style.backgroundImage = `url(${caratula})`;
+    fondoAmarillo.style.display = "block";
+  } else if (fondoAmarillo) {
+    fondoAmarillo.style.display = "none";
+    fondoAmarillo.style.backgroundImage = "";
+  }
+
+}, 5000);
+</script>
+<!-- Botón de compartir nativo -->
+<button id="shareBtn" style="
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 999;
+">
+  <svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" fill="white" viewBox="0 0 24 24">
+    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7a2.48 2.48 0 000-1.39l7.13-4.19a2.5 2.5 0 10-.99-1.96c0 .34.07.67.19.97L8.2 10.96a2.5 2.5 0 100 3.09l7.06 4.07c-.11.28-.18.58-.18.89a2.5 2.5 0 102.5-2.5z"/>
+  </svg>
+</button>
+<script>
+  document.getElementById("shareBtn").addEventListener("click", async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Radio Neysan Plus - ",
+          text: "Escucha Radio Neysan Plus",
+          url: window.location.href
+        });
+      } catch (error) {
+        console.error("Error al compartir:", error);
+      }
+    } else {
+      alert("Tu navegador no soporta la función de compartir nativa.");
+    }
+  });
+</script>
+
+
+    <!-- El botón para abrir el menú lateral -->
+    <span id="menuBtn">&#9776;</span>
+
+    <!-- Menú lateral con botones en la posición correcta -->
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="https://wa.link/2pdl3p"><i class="fas fa-comments"></i> CHAT</a>
+      <a href="#"><i class="fas fa-phone-alt"></i> LLAMADAS</a>
+      <a href="https://nazca.globalhost1.com:8040"><i class="fas fa-star"></i> SITIO WEB</a>
+      <a href="javascript:void(0)" onclick="document.getElementById(\'politicasModal\').style.display=\'block\'"><i class="fas fa-file-alt"></i> POLÍTICAS</a>
+    </div>
+
+    <script>
+      // Función para abrir el menú lateral
+      function openNav() {
+        document.getElementById("mySidenav").style.left = "0";  // Mover a la derecha
+      }
+
+      // Función para cerrar el menú lateral
+      function closeNav() {
+        document.getElementById("mySidenav").style.left = "-250px";  // Mover a la izquierda
+      }
+
+      // Abrir el menú cuando se hace clic en el ícono
+      document.getElementById("menuBtn").onclick = openNav;
+    </script>
+    
+<!-- Modal de Políticas de Privacidad -->
+<div id="politicasModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); color:white; z-index:10000; overflow-y:auto; padding:40px 20px; box-sizing:border-box;">
+  <span onclick="document.getElementById('politicasModal').style.display='none'" style="position:absolute; top:20px; right:30px; font-size:36px; cursor:pointer; color:white;">&times;</span>
+  <h2 style="margin-top:20px;">Políticas de Privacidad – STREAMING DELGADO</h2>
+  <p><strong>Última actualización:</strong> 8 de Septiembre de 2025</p>
+  <p>En <strong>STREAMING DELGADO</strong> valoramos la privacidad de nuestros usuarios y nos comprometemos a proteger la información personal que nos proporcionan. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos sus datos cuando interactúa con nuestros servicios.</p>
+
+  <h3>1. Información que recopilamos</h3>
+  <ul>
+    <li>Datos de contacto (como nombre, correo electrónico y número de teléfono).</li>
+    <li>Información técnica (como dirección IP, tipo de dispositivo y sistema operativo).</li>
+    <li>Estadísticas de uso (como preferencias de contenido, tiempo de conexión, etc.).</li>
+  </ul>
+
+  <h3>2. Uso de la información</h3>
+  <ul>
+    <li>Brindar una mejor experiencia en nuestras plataformas.</li>
+    <li>Mejorar nuestros servicios de streaming y soporte técnico.</li>
+    <li>Enviar notificaciones importantes, promociones o actualizaciones.</li>
+    <li>Cumplir con obligaciones legales y de seguridad.</li>
+  </ul>
+
+  <h3>3. Protección de datos</h3>
+  <p>Implementamos medidas de seguridad físicas, electrónicas y administrativas para proteger sus datos contra accesos no autorizados, uso indebido o divulgación.</p>
+
+  <h3>4. Compartir información</h3>
+  <p><strong>STREAMING DELGADO</strong> no vende ni alquila su información personal a terceros. Solo compartiremos sus datos cuando sea necesario para cumplir con requisitos legales o colaborar con proveedores tecnológicos bajo acuerdos de confidencialidad.</p>
+
+  <h3>5. Derechos del usuario</h3>
+  <p>Usted tiene derecho a acceder, corregir o eliminar su información, y a retirar su consentimiento para el uso de datos.</p>
+  <p>Puede ejercer estos derechos escribiendo a:<br>
+  📧 <strong>wilmerdelgadocieza@gmail.com</strong><br>
+  📱 <strong>+51 980 634 177</strong></p>
+
+  <h3>6. Cookies</h3>
+  <p>Podemos utilizar cookies para mejorar su experiencia en nuestras plataformas. Usted puede configurar su navegador para bloquearlas si lo desea.</p>
+
+  <h3>7. Cambios a esta política</h3>
+  <p>Nos reservamos el derecho de modificar esta Política de Privacidad. Cualquier cambio será informado a través de nuestros canales oficiales.</p>
+
+  <h3>8. Contacto</h3>
+  <p>Para cualquier duda o consulta sobre esta política, contáctenos:<br>
+  📧 <strong>wilmerdelgadocieza@gmail.com</strong><br>
+  📱 <strong>+51 980 634 177</strong></p>
+</div>
+
+</body>
+    
+</html>
